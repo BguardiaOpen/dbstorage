@@ -1,16 +1,36 @@
-INCLUDE_DIR=../sql-parser/src
-LIB_DIR=/lib/x86_64-linux-gnu
+# directories
+BIN        = bin
+SRC        = .
 
-OBJS =  dbblock.o dbfile.o
+# files
+LIBCPP      = $(shell find $(SRC) -name '*.cpp')
+LIBOBJ      = $(LIBCPP:%.cpp=%.o)
 
-#all: $(OBJS)
+# compile & link flages
+CFLAGS     = -std=c++11 -Wall -fPIC -g
+LIBFLAGS   = -shared
+TARGET     = libdbstorage.so
+INSTALL    = /usr/local
 
-dbstorage.so: $(OBJS)
-	g++ -L$(LIB_DIR) $(OBJS) -o $@
+all: library
 
-# General rule for compilation
-%.o: %.cpp *.h
-	g++ -I$(INCLUDE_DIR) -std=c++11 -std=c++0x -Wall -Wno-c++11-compat -DHAVE_CXX_STDHEADERS -D_GNU_SOURCE -D_REENTRANT -O3 -c -ggdb -o "$@" "$<" 
+library: $(TARGET)
+
+$(TARGET): $(LIBOBJ)
+	$(CXX) $(LIBFLAGS) -o $(TARGET) $(LIBOBJ)
+
+
+%.o: %.cpp
+	$(CXX) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f dbstorage.so *.o
+	rm -f $(TARGET)
+	rm -rf $(BIN)
+	find $(SRC) -type f -name '*.o' -delete
+
+install:
+	cp $(TARGET) $(INSTALL)/lib/$(TARGET)
+
+format:
+	astyle --options=astyle.options $(ALLLIB)
+	astyle --options=astyle.options $(ALLTEST)
