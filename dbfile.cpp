@@ -3,17 +3,17 @@
 #include "dbstorage.h"
 
     void DbFile::ensureClosed(){
-        if (dbFile != NULL)
-        {
-            if (dbFile.is_open())
-            {
-                dbFile.close();
-            }
+        if (dbFile.is_open()){
+            dbFile.close();
         }
     }
 
     // ctor/dtor
-    DbFile::DbFile(std::string name) : name(name) {}
+    DbFile::DbFile(std::string name) {
+        this->name = name;
+        dbFile = std::fstream(name, std::ios::out | std::ios::binary);
+        fileSize = 0;
+    }
 
     DbFile::~DbFile(){
         ensureClosed();
@@ -24,8 +24,6 @@
      */
     void DbFile::create()
     {
-        dbFile = std::fstream(name, std::ios::out | std::ios::binary);
-        fileSize = 0;
     }
 
     /**
