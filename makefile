@@ -10,7 +10,7 @@ LIBOBJ      = $(LIBCPP:%.cpp=%.o)
 CFLAGS     = -std=c++11 -Wall -fPIC -g
 LIBFLAGS   = -shared
 TARGET     = libdbstorage.so
-INSTALL    = /usr/local
+INSTALL    = $(HOME)
 
 all: library
 

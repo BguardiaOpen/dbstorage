@@ -12,6 +12,7 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include <fstream>
 
 /*
  * Convenient aliases for types
@@ -40,19 +41,19 @@ public:
      */
     DbBlock(BlockID block);
 
-    virtual ~DbBlock();
+    ~DbBlock();
 
     /**
      * Access the whole block's memory
      * @returns  Raw byte stream of this block
      */
-    virtual void* get_data();
+    void* get_data();
 
     /**
      * Get this block's BlockID within its DbFile.
      * @returns this block's id
      */
-    virtual BlockID get_block_id();
+    BlockID get_block_id();
 
 protected:
     BlockID block_id;
@@ -78,57 +79,57 @@ public:
     // ctor/dtor -- subclasses should handle big-5
     DbFile(std::string name);
 
-    virtual ~DbFile();
+    ~DbFile();
 
     /**
      * Create the file.
      */
-    virtual void create() = 0;
+    void create();
 
     /**
      * Remove the file.
      */
-    virtual void drop() = 0;
+    void drop();
 
     /**
      * Open the file.
      */
-    virtual void open() = 0;
+    void open();
 
     /**
      * Close the file.
      */
-    virtual void close() = 0;
+    void close();
 
     /**
      * Add a new block for this file.
      * @returns  the newly appended block
      */
-    virtual DbBlock* get_new() = 0;
+    DbBlock* get_new();
 
     /**
      * Get a specific block in this file.
      * @param block_id  which block to get
      * @returns         pointer to the DbBlock (freed by caller)
      */
-    virtual DbBlock* get(BlockID block_id) = 0;
+    DbBlock* get(BlockID block_id);
 
     /**
      * Write a block to this file (the block knows its BlockID)
      * @param block  block to write (overwrites existing block on disk)
      */
-    virtual void put(DbBlock* block) = 0;
+    void put(DbBlock* block);
 
     /**
      * Get a list of all the valid BlockID's in the file
      * FIXME - not a good long-term approach, but we'll do this until we put in iterators
      * @returns  a pointer to vector of BlockIDs (freed by caller)
      */
-    virtual BlockIDs* block_ids() { return nullptr; };
+    BlockIDs* block_ids() { return nullptr; };
 
 protected:
     std::string name;  // filename (or part of it)
     std::fstream dbFile;
     u_int32_t fileSize = 0; // limited to 4Gb for now
-    virtual void ensureClosed();
+    void ensureClosed();
 };
